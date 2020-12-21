@@ -16,8 +16,15 @@
 # <uses `--prefix=/usr/local/GNUstep' as option to configure>
 #
 
+set -e
+
 CPUS=`nproc`
-SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH'
+if [ "$EUID" -ne 0 ]
+then
+    SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH'
+else
+    SUDO=
+fi
 KERNEL=`uname -s | awk '{print tolower($0)}'`
 scriptsdir="`pwd`/tools-scripts"
 
