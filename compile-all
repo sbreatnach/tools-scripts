@@ -21,7 +21,7 @@ set -e
 CPUS=`nproc`
 if [ "$EUID" -ne 0 ]
 then
-    SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH'
+    SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH -u root'
 else
     SUDO=
 fi
@@ -122,7 +122,7 @@ fi
 echo "======== Installing Make..."
 $MAKE
 if [ "true" == "$NEEDSROOT" ]; then
-    ${SUDO} -u root $MAKE install
+    ${SUDO} $MAKE install
 else
     $MAKE install
 fi 
@@ -140,7 +140,7 @@ make distclean
 . $prefix/System/Library/Makefiles/GNUstep.sh
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM debug=yes
 if [ "true" == "$NEEDSROOT" ]; then
-${SUDO} -u root ./install.sh $prefix $MAKE
+${SUDO} ./install.sh $prefix $MAKE
 else
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM install
 fi
@@ -153,7 +153,7 @@ make distclean
 ./configure --enable-imagemagick
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM debug=yes
 if [ "true" == "$NEEDSROOT" ]; then
-${SUDO} -u root ./install.sh $prefix $MAKE
+${SUDO} ./install.sh $prefix $MAKE
 else
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM install
 fi
@@ -165,7 +165,7 @@ make distclean
 . $prefix/System/Library/Makefiles/GNUstep.sh
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM debug=yes
 if [ "true" == "$NEEDSROOT" ]; then
-${SUDO} -u root ./install.sh $prefix $MAKE
+${SUDO} ./install.sh $prefix $MAKE
 else
 $MAKE GNUSTEP_INSTALLATION_DOMAIN=SYSTEM install
 fi
@@ -173,8 +173,8 @@ fi
 # Perform other operations
 echo "Add script to etc and xsession..."
 if [ ! -e /etc/profile.d/GNUstep.sh ]; then
-   ${SUDO} -u root ln -s /usr/GNUstep/System/Library/Makefiles/GNUstep.sh /etc/profile.d/GNUstep.sh
+   ${SUDO} ln -s /usr/GNUstep/System/Library/Makefiles/GNUstep.sh /etc/profile.d/GNUstep.sh
 fi
 cd ../plugins-session
-${SUDO} -u root ./install.sh
+${SUDO} ./install.sh
 echo "Done."
