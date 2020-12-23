@@ -1,6 +1,11 @@
 #!/bin/sh
 
-SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH'
+if [ "$EUID" -ne 0 ]
+then
+    SUDO='sudo LD_LIBRARY_PATH=$LD_LIBRARY_PATH -u root'
+else
+    SUDO=
+fi
 CPUS=`nproc`
 
 cd /tmp
@@ -9,21 +14,14 @@ cd /tmp
 ${SUDO} mkdir -p /usr/GNUstep/Local/Library/Libraries
 ${SUDO} mkdir -p /usr/GNUstep/Local/Library/Headers
 
-# cleanup
-rm -rf /tmp/libdispatch
-rm -rf /tmp/libpwq
-rm -rf /tmp/libkqueue
-rm -rf /tmp/libobjc2
-   
-# pull
-git clone --recursive https://github.com/gnustep/libobjc2.git
-git clone https://github.com/mheily/libpwq.git
-# git clone https://github.com/mheily/libkqueue.git
-git clone https://github.com/nickhutchinson/libdispatch.git
-
-# set vars
-export CC=clang
-export CXX=clang++
+if [ ! -d /tmp/libobjc ]
+then
+    # pull
+    git clone --recursive https://github.com/gnustep/libobjc2.git
+    git clone https://github.com/mheily/libpwq.git
+    # git clone https://github.com/mheily/libkqueue.git
+    git clone https://github.com/nickhutchinson/libdispatch.git
+fi
 
 # build and install
 echo "======== Installing libobjc2..."
